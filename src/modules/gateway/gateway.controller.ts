@@ -1,9 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from "@nestjs/common";
+import { GatewayService } from "./gateway.service";
+import { JwtAuthGuard } from "../../../../../libs/common/src";
 
-@Controller('gateway')
+@Controller("gateway")
 export class GatewayController {
-  @Get('/health')
-  checkHealth(): string {
-    return 'API Gateway is operational';
+  constructor(private readonly gatewayService: GatewayService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post("order")
+  createOrder(@Body() orderData: any) {
+    return this.gatewayService.sendRequestToOrder(orderData);
   }
 }
